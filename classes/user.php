@@ -9,30 +9,29 @@ class user {
 	public $email;
 
 	public $password;
-	public $passkey;
 
 	public $membersince;
 
-	public $division;
-	public $divisionapproved;
-	public $divisionadmin;
+	public $division = 0;
+	public $divisionapproved = FALSE;
+	public $divisionadmin = FALSE;
 
-	public $adminusers;
-	public $adminpages;
-	public $admindivisions;
-	public $adminnews;
-	public $adminadmin;
+	public $adminusers = FALSE;
+	public $adminpages = FALSE;
+	public $admindivisions = FALSE;
+	public $adminnews = FALSE;
+	public $adminadmin = FALSE;
 
-	public $banned;
-	public $bannedtime;
-	public $bannedby;
-	public $bannedreason;
+	public $banned = FALSE;
+	public $bannedtime = "";
+	public $bannedby = 0;
+	public $bannedreason = "";
 
-	public $sessionstart;
+	public $sessionstart = "";
 
-	public $verified;
-	public $mailpurpose;
-	public $mailkey;
+	public $verified = FALSE;
+	public $mailpurpose = 0;
+	public $mailkey = "";
 
 	private $sql;
 
@@ -54,16 +53,15 @@ class user {
 		if ($this->by == "id") {
 			$where .= "id=?";
 		} elseif ($this->by == "username") {
-			$where .= "username LIKE ?";
+			$where .= "username=?";
 		} elseif ($this->by == "email") {
-			$where .= "email LIKE ?";
+			$where .= "email=?";
 		}
 
 		if ($stmt = $this->sql->prepare("SELECT id,
 									username,
 									email,
 									password,
-									passkey,
 									membersince,
 									division,
 									divisionapproved,
@@ -95,7 +93,6 @@ class user {
 								$this->username,
 								$this->email,
 								$this->password,
-								$this->passkey,
 								$this->membersince,
 								$this->division,
 								$this->divisionapproved,
@@ -113,7 +110,7 @@ class user {
 								$this->verified,
 								$this->mailpurpose,
 								$this->mailkey);
-			
+
 			$stmt->fetch();
 	       	if ($stmt->num_rows == 1) { //if user exists, say it loaded. Else, say it didn't.
 	       		return TRUE;
@@ -128,10 +125,9 @@ class user {
 
 	public function save() {
 		if (isset($this->id) && $this->id != "") {
-			$stmt = $this->sql->prepare("UPDATE wolfvtc_users SET (username=?,
+			if ($stmt = $this->sql->prepare("UPDATE wolfvtc_users SET username=?,
 									email=?,
 									password=?,
-									passkey=?,
 									membersince=?,
 									division=?,
 									divisionapproved=?,
@@ -148,41 +144,42 @@ class user {
 									sessionstart=?,
 									verified=?,
 									mailpurpose=?,
-									mailkey=?) 
-									WHERE id=?");
-			$stmt->bind_param('sssssibbbbbbbbsissbisi',
-								e($this->username),
-								e($this->email),
-								$this->password,
-								$this->passkey,
-								e($this->membersince),
-								intval($this->division),
-								$this->divisionapproved,
-								$this->divisionadmin,
-								$this->adminusers,
-								$this->adminpages,
-								$this->admindivisions,
-								$this->adminnews,
-								$this->adminadmin,
-								$this->banned,
-								$this->bannedtime,
-								intval($this->bannedby),
-								e($this->bannedreason),
-								e($this->sessionstart),
-								$this->verified,
-								intval($this->mailpurpose),
-								$this->mailkey,
-								intval($this->id));
-			if ($stmt->execute()) {
-				return TRUE;
+									mailkey=? 
+									WHERE id=?")) {
+				$stmt->bind_param('ssssiiiiiiiiisissiisi',
+									e($this->username),
+									e($this->email),
+									$this->password,
+									$this->membersince,
+									intval($this->division),
+									intval($this->divisionapproved),
+									intval($this->divisionadmin),
+									intval($this->adminusers),
+									intval($this->adminpages),
+									intval($this->admindivisions),
+									intval($this->adminnews),
+									intval($this->adminadmin),
+									intval($this->banned),
+									$this->bannedtime,
+									intval($this->bannedby),
+									e($this->bannedreason),
+									$this->sessionstart,
+									intval($this->verified),
+									intval($this->mailpurpose),
+									e($this->mailkey),
+									intval($this->id));
+				if ($stmt->execute()) {
+					return TRUE;
+				} else {
+					return FALSE;
+				}
 			} else {
 				return FALSE;
 			}
 		} else {
-			$stmt = $this->sql->prepare("INSERT INTO wolfvtc_users (username,
+			if ($stmt = $this->sql->prepare("INSERT INTO wolfvtc_users (username,
 									email,
 									password,
-									passkey,
 									membersince,
 									division,
 									divisionapproved,
@@ -200,31 +197,33 @@ class user {
 									verified,
 									mailpurpose,
 									mailkey) 
-									VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			$stmt->bind_param('sssssibbbbbbbbsissbis',
-								$this->username,
-								$this->email,
-								$this->password,
-								$this->passkey,
-								$this->membersince,
-								intval($this->division),
-								$this->divisionapproved,
-								$this->divisionadmin,
-								$this->adminusers,
-								$this->adminpages,
-								$this->admindivisions,
-								$this->adminnews,
-								$this->adminadmin,
-								$this->banned,
-								$this->bannedtime,
-								intval($this->bannedby),
-								$this->bannedreason,
-								$this->sessionstart,
-								$this->verified,
-								intval($this->mailpurpose),
-								$this->mailkey);
-			if ($stmt->execute()) {
-				return TRUE;
+									VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+				$stmt->bind_param('ssssiiiiiiiiisissiis',
+									e($this->username),
+									e($this->email),
+									$this->password,
+									$this->membersince,
+									intval($this->division),
+									intval($this->divisionapproved),
+									intval($this->divisionadmin),
+									intval($this->adminusers),
+									intval($this->adminpages),
+									intval($this->admindivisions),
+									intval($this->adminnews),
+									intval($this->adminadmin),
+									intval($this->banned),
+									$this->bannedtime,
+									intval($this->bannedby),
+									e($this->bannedreason),
+									$this->sessionstart,
+									intval($this->verified),
+									intval($this->mailpurpose),
+									e($this->mailkey));
+				if ($stmt->execute()) {
+					return TRUE;
+				} else {
+					return FALSE;
+				}
 			} else {
 				return FALSE;
 			}
@@ -233,9 +232,7 @@ class user {
 
 	public function changePW($newpw) { //make a new passkey and encrypt pw.
 		if (strlen($newpw) >= 6 && strlen($newpw) <= 150) {
-			$newpwkey = randomString(50);
-			$this->passkey = $newpwkey;
-			$this->password = hash("sha512", $newpwkey . $newpw);
+			$this->password = password_hash($newpw, PASSWORD_BCRYPT);
 			return TRUE;
 		} else {
 			return FALSE;
@@ -243,8 +240,8 @@ class user {
 	}
 
 	public function checkPW($pwinput) { // check if pw input is correct compared to users pw.
-		if (strlen($newpw) >= 6 && strlen($newpw) <= 150) {
-			if ($this->password == hash("sha512", $passkey . $pwinput)) {
+		if (strlen($pwinput) >= 6 && strlen($pwinput) <= 150) {
+			if (password_verify($pwinput , $this->password)) {
 				return TRUE;
 			} else {
 				return FALSE;

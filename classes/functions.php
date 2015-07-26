@@ -1,7 +1,7 @@
 <?php
 
 //RANDOM STRING
-public function randomString($chars) {
+function randomString($chars) {
 	$viable = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	$viablelen = strlen($viable);
 	$rs = "";
@@ -15,11 +15,11 @@ public function randomString($chars) {
 	return $rs;
 }
 
-public function e($input) {
+function e($input) {
 	return htmlspecialchars($input);
 }
 
-public function isMail($input) {
+function isMail($input) {
 	if (filter_var($input, FILTER_VALIDATE_EMAIL) && strlen($input) <= 150) {
 		return TRUE;
 	} else {
@@ -27,6 +27,6 @@ public function isMail($input) {
 	}
 }
 
-public function currentTime() {
+function currentTime() {
 	return date("Y-m-d H:i:s");
 }

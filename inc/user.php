@@ -1,7 +1,7 @@
 <?php
 
 if (isset($_SESSION['userid'])) {
-	$sessus = new user("id", $_SESSION['userid']);
+	$sessus = new user($sql, "id", $_SESSION['userid']);
 	if ($sessus->load() == TRUE) {
 		$loggedin = TRUE;
 	} else {
@@ -12,18 +12,19 @@ if (isset($_SESSION['userid'])) {
 }
 
 if ($loggedin == TRUE) {
-	$user = '<div class="user loggedin">
+	$userbar = '<div class="user loggedin">
 			<ul>
 				<li><a href="logout.php">Log out</a></li>
-				<li><a href="user.php">Edit account</a></li>';
+				<li><a href="user.php">My account</a></li>';
 	if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admindivisions == TRUE || $sessus->adminnews == TRUE || $sessus->adminadmin == TRUE) {
-		$user .= '<li><a href="admin.php">Admin CP</a></li>';
+		$userbar .= '<li><a href="admin.php">Admin CP</a></li>';
 	}
 	if ($sessus->divisionadmin == TRUE) {
-		$user .= '<li><a href="admin.php">Division Admin</a></li>';
+		$userbar .= '<li><a href="admin.php">Division Admin</a></li>';
 	}
 
-	$user .= '<li><a href="division.php">My Division</a></li>
+	$userbar .= '<li><a href="division.php">My Division</a></li>
+				<li><a href="Jobs.php">Jobs</a></li>
 			</ul>
 			</div>';
 } else {
@@ -32,7 +33,7 @@ if ($loggedin == TRUE) {
 		$drivers = $sql->query("SELECT count(*) FROM wolfvtc_users WHERE banned=FALSE AND verified=TRUE");
 		$drivers = $drivers->fetch_assoc();
 		
-		$user =  '
+		$userbar =  '
 			<div class="user">
 				<div class="left">
 					<form method="post" action="login.php">
@@ -40,7 +41,7 @@ if ($loggedin == TRUE) {
 						<p>Username:</p>
 						<input type="text" name="username" placeholder="Username">
 						<p>Password:</p>
-						<input type="password" name="username" placeholder="Password">
+						<input type="password" name="password" placeholder="Password">
 						<input type="submit" value="Log in">
 					</form>
 				</div>
@@ -51,7 +52,7 @@ if ($loggedin == TRUE) {
 				</div>
 			</div>';
 	} else {
-		$user = '<div class="user loggedin">
+		$userbar = '<div class="user loggedin">
 			<ul>
 				<li><a href="login.php">Log in</a></li>
 				<li><a href="register.php">Register</a></li>

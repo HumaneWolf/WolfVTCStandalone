@@ -16,21 +16,24 @@ $loginform = TRUE;
 
 require("inc/user.php");
 
+
 //PAGE CODE
+$pagecontent = "";
 
-//news list
-$newsq = $sql->query("SELECT * FROM wolfvtc_announcements WHERE divid=0");
-$news = "";
+if ($loggedin == TRUE) {
+	unset($_SESSION['userid']);
 
-if ($newsq->num_rows >= 1) {
-	$news .= "<h3>Latest news:</h3>";
-}
+	$pagecontent .= '
+	<div class="notification green">
+		<p>You have been logged out.</p>
+	</div>';
 
-while ($row = $newsq->fetch_assoc()) {
-	$author = new user($sql, "id", $row['userid']);
-	if ($author->load()) {
-		$news .= '<p><span class="title"><a href="news.php?art=' . $row['id'] . '" class="news">' . $row['title'] . '</a></span> <span class="by">By ' . $author->username . ' on ' . $row['datetime'] . '</p>';
-	}
+	require("inc/user.php");
+} else {
+	$pagecontent .= '
+	<div class="notification red">
+		<p>You are not logged in.</p>
+	</div>';
 }
 
 ?>
@@ -46,7 +49,7 @@ while ($row = $newsq->fetch_assoc()) {
 		</div>
 			<?php echo $userbar; ?>
 		<div class="content">
-			<?php echo $news; ?>
+			<?php echo $pagecontent; ?>
 		</div>
 		<div class="footer">
 			<?php include("inc/footer.php"); ?>

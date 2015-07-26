@@ -178,8 +178,7 @@ body {
 	margin-right: 20px;
 }
 
-.content th {
-	font-weight: normal;
+.content td {
 	min-width: 160px;
 	text-align: left;
 }

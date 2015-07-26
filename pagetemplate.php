@@ -4,6 +4,7 @@ session_start();
 //INCLUDES
 require_once("config.php");
 require_once("db/connect.php");
+require_once("classes/functions.php");
 
 //USED CLASSES
 require_once("classes/settings.php");
@@ -15,6 +16,7 @@ require_once("classes/user.php");
 //Remove to have the full login form show up on this page.
 
 require("inc/user.php");
+
 
 //PAGE CODE
 
@@ -31,7 +33,7 @@ require("inc/user.php");
 		<div class="header">
 			<?php require("inc/header.php"); ?>
 		</div>
-			<?php echo $user; ?>
+			<?php echo $userbar; ?>
 		<div class="content">
 			INSERT CONTENT HERE
 		</div>
