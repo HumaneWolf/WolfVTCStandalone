@@ -1,0 +1,18 @@
+.notification {
+	width: 80%;
+	margin-left: 10%;
+	margin-right: 10%;
+	border: solid 2px;
+	border-radius: 15px;
+	font-weight: bolder;
+}
+
+.notification.red {
+	background-color: #D9695D;
+	border-color: #C0392B;
+}
+
+.notification.green {
+	background-color: #72D49B;
+	border-color: #27AE60;
+}
