@@ -24,9 +24,13 @@ if ($loggedin == TRUE) {
 	}
 
 	$userbar .= '<li><a href="division.php">My Division</a></li>
-				<li><a href="Jobs.php">Jobs</a></li>
-			</ul>
-			</div>';
+				<li><a href="jobs.php">Jobs</a></li>
+			</ul></div>';
+	if($sessus->banned == TRUE) {
+		$userbar .= '<div class="notification red" style="float:left;">
+						<p>Your account is banned. Check the "My Account" page for more info.</p>
+					</div>';
+	}
 } else {
 	if (isset($loginform)) {
 		//no. of drivers

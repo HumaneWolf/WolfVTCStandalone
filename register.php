@@ -134,6 +134,11 @@ if ($loggedin == TRUE) {
 			<div class="notification red">
 				' . $error['top'] . '
 			</div>';
+		} else {
+			$error['username'] = "";
+			$error['email'] = "";
+			$error['password'] = "";
+			$error['password2'] = "";
 		}
 		$pagecontent .= '
 		<form action="register.php" method="post">

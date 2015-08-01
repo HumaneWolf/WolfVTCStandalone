@@ -18,20 +18,23 @@ require("inc/user.php");
 //PAGE CODE
 $pagecontent = "";
 if ($loggedin == TRUE) {
+	//password
 	$filled = FALSE;
 
 	$fail['current'] = TRUE;
 	$fail['password'] = TRUE;
+
+	$message = "";
 
 	$error['top'] = "";
 	$error['current'] = "";
 	$error['password'] = "";
 	$error['password2'] = "";
 
-	if (isset($_POST['current'])) {
+	if (isset($_POST['current']) && $_POST['current'] != "") {
 		if (strlen($_POST['current']) >= 6 && strlen($_POST['current']) <= 150) {
 			if ($sessus->checkPW($_POST['current'])) {
-				$fail['current'] == FALSE;
+				$fail['current'] = FALSE;
 			} else {
 				$error['current'] = "Wrong current password.";
 				$error['top'] .= "<p>Wrong current password.</p>";
@@ -43,6 +46,46 @@ if ($loggedin == TRUE) {
 		$filled = TRUE;
 	}
 
+	if (isset($_POST['password']) && $_POST['password'] != "") {
+		if (strlen($_POST['current']) >= 6 && strlen($_POST['current']) <= 150) {
+			if (isset($_POST['password2']) && $_POST['password2'] != "") {
+				if ($_POST['password'] == $_POST['password2']) {
+					$fail['password'] = FALSE;
+				} else {
+					$error['password2'] = "The passwords are not identical.";
+					$error['top'] .= "<p>The passwords are not identical.</p>";
+				}
+			} else {
+				$error['password2'] = "The passwords are not identical.";
+				$error['top'] .= "<p>The passwords are not identical.</p>";
+			}
+		} else {
+			$error['password'] = "Your new password must be at least 6 characters.";
+			$error['top'] .= "<p>Your new password must be at least 6 characters.</p>";
+		}
+		$filled = TRUE;
+	}
+
+	if ($filled == TRUE && $fail['current'] == FALSE && $fail['password'] == FALSE) {
+		if ($sessus->changePW($_POST['password'])) {
+			if ($sessus->save()) {
+				$message = '<div class="notification green"><p>Your password has been changed.</p></div>';
+			} else {
+				$error['password'] = "Failed to save the new password.";
+				$error['top'] .= "<p>Failed to save the new password.</p>";
+			}
+		} else {
+			$error['password'] = "Failed to update the password.";
+			$error['top'] .= "<p>Failed to update the password.</p>";
+		}
+	}
+
+	if (isset($error['top']) && $error['top'] != "" && $filled == TRUE) {
+		$error['top'] = '<div class="notification red">' . $error['top'] . '</div>';
+	}
+
+
+	//page
 	$pagecontent .= "<h3>My account:</h3>
 	<p><b>Verification:</b> ";
 
@@ -67,7 +110,7 @@ if ($loggedin == TRUE) {
 	$pagecontent .= '<h4>Change Password</h4>
 
 	<form action="user.php" method="post">
-			' . $error['top'] . '
+			' . $error['top'] . $message . '
 			<table>
 				<tr>
 					<td>Current password</td>
@@ -81,7 +124,7 @@ if ($loggedin == TRUE) {
 				</tr>
 				<tr>
 					<td>Confirm Password</td>
-					<td><input type="password" name="password2" placeholder="Password" size="35"></td>
+					<td><input type="password" name="password2" placeholder="Repeat Password" size="35"></td>
 					<td>' . $error['password2'] . '</td>
 				</tr>
 				<tr>
