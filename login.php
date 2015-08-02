@@ -16,6 +16,8 @@ $loginform = TRUE;
 
 require("inc/user.php");
 
+//PAGE TITLE
+$pagetitle = "Log in";
 
 //PAGE CODE
 $pagecontent = "";

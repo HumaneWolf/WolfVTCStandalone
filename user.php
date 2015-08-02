@@ -14,6 +14,9 @@ require_once("classes/user.php");
 
 require("inc/user.php");
 
+//PAGE TITLE
+$pagetitle = "UserCP";
+
 
 //PAGE CODE
 $pagecontent = "";

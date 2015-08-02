@@ -16,6 +16,9 @@ $loginform = TRUE;
 
 require("inc/user.php");
 
+//PAGETITLE
+$pagetitle = "Home";
+
 //PAGE CODE
 
 //news list

@@ -18,7 +18,7 @@ require_once("classes/user.php");
 require("inc/user.php");
 
 //PAGE TITLE
-//$pagetitle = "fav title";
+$pagetitle = "Admin CP";
 
 //PAGE CODE
 
@@ -28,6 +28,7 @@ require("inc/user.php");
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel="stylesheet" type="text/css" href="style/admin.css">
 	<?php include("inc/head.php"); ?>
 </head>
 <body>
