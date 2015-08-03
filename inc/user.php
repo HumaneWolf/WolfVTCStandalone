@@ -24,6 +24,7 @@ if ($loggedin == TRUE) {
 	}
 
 	$userbar .= '<li><a href="division.php">My Division</a></li>
+				<li><a href="forum.php">Forum</a></li>
 				<li><a href="jobs.php">Jobs</a></li>
 			</ul></div>';
 	if($sessus->banned == TRUE) {

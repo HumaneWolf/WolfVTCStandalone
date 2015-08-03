@@ -30,3 +30,8 @@ function isMail($input) {
 function currentTime() {
 	return date("Y-m-d H:i:s");
 }
+
+function newLine($text) {
+	$text = str_replace("\n", "<br>", $text);
+	return $text;
+}

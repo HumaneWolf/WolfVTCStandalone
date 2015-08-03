@@ -1,6 +1,6 @@
 <?php
 
-class anno {
+class forum {
 	public $id;
 
 	public $divid;
@@ -8,7 +8,6 @@ class anno {
 
 	public $datetime;
 
-	public $title;
 	public $text;
 
 	private $sql;
@@ -20,7 +19,7 @@ class anno {
 
 	public function load() {
 		if (isset($this->id) && $this->id != "") {
-			if ($load = $this->sql->query("SELECT * FROM wolfvtc_announcements WHERE id=" . intval($this->id))) {
+			if ($load = $this->sql->query("SELECT * FROM wolfvtc_forum WHERE id=" . intval($this->id))) {
 				if ($load->num_rows == 1) {
 					$load = $load->fetch_assoc();
 
@@ -29,7 +28,6 @@ class anno {
 
 					$this->datetime = $load['datetime'];
 
-					$this->title = $load['title'];
 					$this->text = $load['text'];
 
 					return TRUE;
@@ -46,8 +44,8 @@ class anno {
 
 	public function save() {
 		if (isset($this->id) && $id != "") {
-			if ($save = $this->sql->prepare("UPDATE wolfvtc_announcements SET (divid=?, userid=?, datetime=?, title=?, 'text'=?) WHERE id=?")) {
-				$save->bind_param("iisssi", intval($this->divid), intval($this->userid), e($this->datetime), e($this->title), $this->text, intval($this->id));
+			if ($save = $this->sql->prepare("UPDATE wolfvtc_forum SET (divid=?, userid=?, datetime=?, 'text'=?) WHERE id=?")) {
+				$save->bind_param("iissi", intval($this->divid), intval($this->userid), e($this->datetime), e($this->text), intval($this->id));
 				if ($save->execute()) {
 					return TRUE;
 				} else {
@@ -55,8 +53,8 @@ class anno {
 				}
 			}
 		} else {
-			if ($save = $this->sql->prepare("INSERT INTO wolfvtc_announcements (divid, userid, datetime, title, 'text') VALUES (?, ?, ?, ?, ?)")) {
-				$save->bind_param("iisss", intval($this->divid), intval($this->userid), e($this->datetime), e($this->title), $this->text);
+			if ($save = $this->sql->prepare("INSERT INTO wolfvtc_forum (divid, userid, datetime, 'text') VALUES (?, ?, ?, ?)")) {
+				$save->bind_param("iiss", intval($this->divid), intval($this->userid), e($this->datetime), e($this->text));
 				if ($save->execute()) {
 					return TRUE;
 				} else {

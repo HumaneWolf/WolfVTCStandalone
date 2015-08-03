@@ -12,6 +12,7 @@ Being website based, the system is easily accessible and does not require any do
 - Easy to add new cities and cargos manually.
 - A blog/news section and custom page support.
 - Support for company divisions.
+- Forum.
 
 ## Planned features
 - Plugins for forum softwares to integrate logins.
