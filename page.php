@@ -30,15 +30,15 @@ if (isset($_GET['id']) && intval($_GET['id']) != 0) {
 			$pagecontent .= '<h3>' . $page->title . '</h3>
 			' . $page->text;
 		} else {
-			$pagecontent .= "<h3>You do not have permission to view this page.</h3>";
+			$pagecontent .= '<div class="notification red"><p>You do not have permission to view this page.</p></div>';
 			$pagetitle = "Not found";
 		}
 	} else {
-		$pagecontent .= "<h3>Page not found.</h3>";
+		$pagecontent .= '<div class="notification red"><p>404 page not found.</p></div>';
 		$pagetitle = "Not found";
 	}
 } else {
-	$pagecontent .= "<h3>No page specified.</h3>";
+	$pagecontent .= '<div class="notification red"><p>Page not specified.</p></div>';
 	$pagetitle = "Not found";
 }
 

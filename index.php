@@ -21,6 +21,18 @@ $pagetitle = "Home";
 
 //PAGE CODE
 
+
+//Custom front page content
+$pagecontent = "";
+$content = new config($sql);
+
+$content->name = "frontContent";
+if ($content->load()) {
+	if (isset($content->value) && $content->value != "") {
+		$pagecontent .= '<div class="content">' . $content->value . '</div>';
+	}
+}
+
 //news list
 $newsq = $sql->query("SELECT * FROM wolfvtc_announcements WHERE divid=0");
 $news = "";
@@ -48,6 +60,7 @@ while ($row = $newsq->fetch_assoc()) {
 			<?php require("inc/header.php"); ?>
 		</div>
 			<?php echo $userbar; ?>
+			<?php echo $pagecontent; ?>
 		<div class="content">
 			<?php echo $news; ?>
 		</div>

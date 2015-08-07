@@ -19,9 +19,6 @@ if ($loggedin == TRUE) {
 	if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admindivisions == TRUE || $sessus->adminnews == TRUE || $sessus->adminadmin == TRUE) {
 		$userbar .= '<li><a href="admin.php">Admin CP</a></li>';
 	}
-	if ($sessus->divisionadmin == TRUE) {
-		$userbar .= '<li><a href="admin.php">Division Admin</a></li>';
-	}
 
 	$userbar .= '<li><a href="division.php">My Division</a></li>
 				<li><a href="forum.php">Forum</a></li>

@@ -39,15 +39,15 @@ if (isset($_GET['art']) && intval($_GET['art']) != 0) {
 
 			$pagetitle = "News: " . $news->title;
 		} else {
-			$pagecontent .= "<h3>The news article could not be found.</h3>";
+			$pagecontent .= '<div class="notification red"><p>You do not have permission to view this page.</p></div>';
 			$pagetitle = "Not found";
 		}
 	} else {
-		$pagecontent .= "<h3>The news article could not be found.</h3>";
+		$pagecontent .= '<div class="notification red"><p>404 article not found.</p></div>';
 		$pagetitle = "Not found";
 	}
 } else {
-	$pagecontent .= "<h3>No news article specified.</h3>";
+	$pagecontent .= '<div class="notification red"><p>Article not specified.</p></div>';
 	$pagetitle = "Not found";
 }
 

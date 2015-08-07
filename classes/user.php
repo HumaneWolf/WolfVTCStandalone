@@ -27,8 +27,6 @@ class user {
 	public $bannedby = 0;
 	public $bannedreason = "";
 
-	public $sessionstart = "";
-
 	public $verified = FALSE;
 	public $mailpurpose = 0;
 	public $mailkey = "";
@@ -75,7 +73,6 @@ class user {
 									bannedtime,
 									bannedby,
 									bannedreason,
-									sessionstart,
 									verified,
 									mailpurpose,
 									mailkey FROM wolfvtc_users " . $where)) {
@@ -106,7 +103,6 @@ class user {
 								$this->bannedtime,
 								$this->bannedby,
 								$this->bannedreason,
-								$this->sessionstart,
 								$this->verified,
 								$this->mailpurpose,
 								$this->mailkey);
@@ -141,12 +137,11 @@ class user {
 									bannedtime=?,
 									bannedby=?,
 									bannedreason=?,
-									sessionstart=?,
 									verified=?,
 									mailpurpose=?,
 									mailkey=? 
 									WHERE id=?")) {
-				$stmt->bind_param('ssssiiiiiiiiisissiisi',
+				$stmt->bind_param('ssssiiiiiiiiisisiisi',
 									e($this->username),
 									e($this->email),
 									$this->password,
@@ -163,7 +158,6 @@ class user {
 									$this->bannedtime,
 									intval($this->bannedby),
 									e($this->bannedreason),
-									$this->sessionstart,
 									intval($this->verified),
 									intval($this->mailpurpose),
 									e($this->mailkey),
@@ -193,12 +187,11 @@ class user {
 									bannedtime,
 									bannedby,
 									bannedreason,
-									sessionstart,
 									verified,
 									mailpurpose,
 									mailkey) 
-									VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-				$stmt->bind_param('ssssiiiiiiiiisissiis',
+									VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+				$stmt->bind_param('ssssiiiiiiiiisisiis',
 									e($this->username),
 									e($this->email),
 									$this->password,
@@ -215,7 +208,6 @@ class user {
 									$this->bannedtime,
 									intval($this->bannedby),
 									e($this->bannedreason),
-									$this->sessionstart,
 									intval($this->verified),
 									intval($this->mailpurpose),
 									e($this->mailkey));
@@ -243,6 +235,23 @@ class user {
 		if (strlen($pwinput) >= 6 && strlen($pwinput) <= 150) {
 			if (password_verify($pwinput , $this->password)) {
 				return TRUE;
+			} else {
+				return FALSE;
+			}
+		} else {
+			return FALSE;
+		}
+	}
+
+	public function logLogin() {
+		if (isset($this->id)) {
+			if ($log = $this->sql->prepare("INSERT INTO wolfvtc_logins (userid, datetime, ip) VALUES (?, ?, ?)")) {
+				$log->bind_param("iss", $this->id, currentTime(), $_SERVER['REMOTE_ADDR']);
+				if ($log->execute()) {
+					return TRUE;
+				} else {
+					return FALSE;
+				}
 			} else {
 				return FALSE;
 			}

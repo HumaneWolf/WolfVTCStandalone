@@ -107,7 +107,7 @@ if ($loggedin == TRUE) {
 
 			$user->membersince = currentTime();
 
-			$user->sessionstart = currentTime();
+			$user->logLogin();
 
 			if ($user->changePW($_POST['password'])) {
 				if ($user->save()) {
@@ -144,7 +144,7 @@ if ($loggedin == TRUE) {
 		}
 		$pagecontent .= '
 		<form action="register.php" method="post">
-			<table>
+			<table class="register">
 				<tr>
 					<td>Username</td>
 					<td><input type="text" name="username" placeholder="Username" size="35" value="' . $fill['username'] . '"></td>

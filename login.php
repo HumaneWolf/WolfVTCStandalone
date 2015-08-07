@@ -46,7 +46,7 @@ if ($loggedin == FALSE) {
 			$logginguser = new user($sql, "username", $_POST['username']);
 			if ($logginguser->load() == TRUE) {
 				if ($logginguser->checkPW($_POST['password'])) {
-					$logginguser->sessionstart = currentTime();
+					$logginguser->logLogin();
 					if ($logginguser->save()) {
 						$_SESSION['userid'] = $logginguser->id;
 

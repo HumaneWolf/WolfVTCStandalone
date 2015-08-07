@@ -73,9 +73,9 @@ body {
 
 .user {
 	background-color: #FFFFFF;
-	border-radius: 50px;
 	height: 250px;
 	margin-bottom: 25px;
+	border-radius: 10px;
 }
 
 .user.loggedin {
@@ -144,9 +144,9 @@ body {
 /* CONTENT */
 .content {
 	background-color: #FFFFFF;
-	border-radius: 50px;
 	margin-bottom: 25px;
 	padding-bottom: 5px;
+	border-radius: 10px;
 }
 
 .content p {
@@ -175,11 +175,16 @@ body {
 .content table {
 	margin-left: 20px;
 	margin-right: 20px;
+	width: calc(100% - 40px);
 }
 
-.content td {
+.content .register td {
 	min-width: 160px;
 	text-align: left;
+}
+
+.content .table td {
+	border: 1px solid;
 }
 
 .content input {

@@ -4,6 +4,8 @@ class config {
 	public $name;
 	public $value;
 
+	private $loaded = FALSE;
+
 	private $sql;
 
 	public function __construct($sql) {
@@ -19,13 +21,14 @@ class config {
 			$load->bind_result($this->value);
 			$load->fetch();
 			return TRUE;
+			$this->loaded = TRUE;
 		} else {
 			return FALSE;
 		}
 	}
 
 	public function save() {
-		if (isset($this->name) && $this->name != "") {
+		if ($loaded == TRUE) {
 			if ($save = $this->sql->prepare("UPDATE wolfvtc_config SET (value=?) WHERE name=?")) {
 				$save->bind_param("ss", $this->value, $this->name);
 				if ($save->execute()) {

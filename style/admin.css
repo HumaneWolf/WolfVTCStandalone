@@ -1,0 +1,27 @@
+.admbutton {
+	display: inline-block;
+	height: 35px;
+	width: 25%;
+	background-color: #FFFFFF;
+	text-align: center;
+	line-height: 35px;
+	font-weight: bolder;
+	margin: -1px;
+	border: 1px solid;
+}
+
+.admbutton a {
+	color: #000000;
+	text-decoration: none;
+}
+
+.link input[type=submit] {
+	border: none;
+	background-color: inherit;
+	height: auto;
+	width: auto;
+	margin: 0;
+	color: #0000EE;
+	font-weight: bolder;
+	text-decoration: underline;
+}
