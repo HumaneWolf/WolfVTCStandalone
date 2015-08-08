@@ -25,3 +25,8 @@
 	font-weight: bolder;
 	text-decoration: underline;
 }
+
+.linkify {
+	color: #0000EE;
+	text-decoration: underline;
+}

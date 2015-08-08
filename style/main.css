@@ -205,3 +205,8 @@ body {
 	color: #ad2930;
 	text-decoration: none;
 }
+
+.content h4 {
+	margin: 5px;
+	margin-left: 0;
+}
