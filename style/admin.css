@@ -30,3 +30,9 @@
 	color: #0000EE;
 	text-decoration: underline;
 }
+
+textarea {
+	width: 380px;
+	height: 90px;
+	resize: none;
+}

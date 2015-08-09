@@ -224,7 +224,7 @@ class user {
 
 	public function changePW($newpw) { //make a new passkey and encrypt pw.
 		if (strlen($newpw) >= 6 && strlen($newpw) <= 150) {
-			$this->password = password_hash($newpw, PASSWORD_BCRYPT);
+			$this->password = password_hash($newpw, PASSWORD_DEFAULT);
 			return TRUE;
 		} else {
 			return FALSE;

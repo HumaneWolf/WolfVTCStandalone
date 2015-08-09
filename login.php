@@ -46,29 +46,28 @@ if ($loggedin == FALSE) {
 			$logginguser = new user($sql, "username", $_POST['username']);
 			if ($logginguser->load() == TRUE) {
 				if ($logginguser->checkPW($_POST['password'])) {
+
+					if (password_needs_rehash($logginguser->password, PASSWORD_DEFAULT)) {
+						$logginguser->password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+						$logginguser->save();
+					}
+
 					$logginguser->logLogin();
-					if ($logginguser->save()) {
-						$_SESSION['userid'] = $logginguser->id;
+					$_SESSION['userid'] = $logginguser->id;
 
-						$pagecontent .= '
-							<div class="notification green">
-								<p>You have been logged in.</p>
-							</div>';
+					$pagecontent .= '
+						<div class="notification green">
+							<p>You have been logged in.</p>
+						</div>';
 
-						if ($logginguser->banned == TRUE) {
-							$pagecontent .= '
-							<div class="notification false">
-								<p>Your account is banned. Find out more on the "My Account" page.</p>
-							</div>';
-						}
-						$loginform = FALSE;
-						require("inc/user.php");
-					} else {
+					if ($logginguser->banned == TRUE) {
 						$pagecontent .= '
-						<div class="notification red">
-							<p>Failed to complete log in.</p>
+						<div class="notification false">
+							<p>Your account is banned. Find out more on the "My Account" page.</p>
 						</div>';
 					}
+					$loginform = FALSE;
+					require("inc/user.php");
 				} else {
 					$pagecontent .= '
 					<div class="notification red">

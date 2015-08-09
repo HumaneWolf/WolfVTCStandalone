@@ -45,7 +45,7 @@ if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admin
 				if ($list->num_rows == 0) {
 					$pagecontent .= '<div class="notification red"><p>No users awaiting approval.</p></div>';
 				} else {
-					$pagecontent .= '<table class="table">
+					$pagecontent .= '<table class="table" id="verifylist"><thead>
 					<tr>
 						<th>ID</th>
 						<th>Username</th>
@@ -53,7 +53,7 @@ if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admin
 						<th>Signed up</th>
 						<th>Banned</th>
 						<th>Actions</th>
-					</tr>';
+					</tr></thead><tbody>';
 
 					while ($row = $list->fetch_assoc()) {
 						$pagecontent .= '<tr>
@@ -77,7 +77,13 @@ if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admin
 						</tr>';
 					}
 
-					$pagecontent .= '</table>';
+					$pagecontent .= '</tbody></table>
+					<script>$(document).ready(function() 
+					    { 
+					        $("#userlist").tablesorter(); 
+					    } 
+					); 
+					</script>';
 				}
 			} else {
 				$pagecontent .= '<div class="notification red"><p>Failed to load users.</p></div>';
@@ -414,7 +420,7 @@ if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admin
 					if ($list->num_rows == 0) {
 						$pagecontent .= '<div class="notification red"><p>No users (then how are you here? o.O)</p></div>';
 					} else {
-						$pagecontent .= '<table class="table">
+						$pagecontent .= '<table class="table" id="userlist"><thead>
 						<tr>
 							<th>ID</th>
 							<th>Username</th>
@@ -423,7 +429,7 @@ if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admin
 							<th>Verified</th>
 							<th>Banned</th>
 							<th>Actions</th>
-						</tr>';
+						</tr></thead><tbody>';
 
 						while ($row = $list->fetch_assoc()) {
 							$pagecontent .= '<tr>
@@ -448,17 +454,179 @@ if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admin
 							<td>
 								<a href="admin.php?action=users&id=' . $row['id'] . '" class="linkify">Edit user</a>
 								<br>
-								<a href="admin.php?action=bans&do=add&id=' . $row['id'] . '" class="linkify">Edit ban</a>
+								<a href="admin.php?action=bans&edit=' . $row['id'] . '" class="linkify">Edit ban</a>
 							</td>
 							</tr>';
 						}
-						$pagecontent .= '</table>';
+						$pagecontent .= '</tbody></table>
+						<script>$(document).ready(function() 
+						    { 
+						        $("#userlist").tablesorter(); 
+						    } 
+						); 
+						</script>';
 					}
 				} else {
 					$pagecontent .= '<div class="notification red"><p>Failed to load users.</p></div>';
 				}
 			}
-		} else {
+		} elseif ($_GET['action'] == "bans" && $sessus->adminusers == TRUE) {
+			if (isset($_GET['edit']) && intval($_GET['edit']) != 0) {
+				$pagecontent .= "<h3>Edit user ban</h3>";
+				$ban = new user($sql, "id", intval($_GET['edit']));
+				if ($ban->load()) {
+
+					$changed = FALSE;
+					$redmsg = "";
+					$greenmsg = "";
+					if (isset($_POST['save'])) {
+						if (isset($_POST['isbanned'])) {
+							$changed = TRUE;
+							$ban->banned = TRUE;
+						} else {
+							$changed = TRUE;
+							$ban->banned = FALSE;
+						}
+
+						if (isset($_POST['banreason'])) {
+							$changed = TRUE;
+							if (strlen($_POST['banreason']) >= 3 && strlen($_POST['banreason']) <= 150) {
+								$ban->bannedreason = $_POST['banreason'];
+							} elseif ($ban->banned == FALSE && $_POST['banreason'] == "") {
+								$changed = TRUE;
+								$ban->bannedreason = "";
+							} else {
+								$redmsg .= "<p>You must include a ban reason between 3 and 150 characters long.<p>";
+							}
+						}
+
+						if ($ban->save()) {
+							$greenmsg .= "<p>The changes has been saved.</p>";
+						} else {
+							$redmsg .= "<p>Failed to save changes.</p>";
+						}
+					}
+
+					//messages
+					if (isset($greenmsg) && $greenmsg != "") {
+						$greenmsg = '<div class="notification green">' . $greenmsg . '</div>';
+					}
+
+					if (isset($redmsg) && $redmsg != "") {
+						$redmsg = '<div class="notification red">' . $redmsg . '</div>';
+					}
+
+					//Is banned? Checkbox generated.
+					$banned = '<input type="checkbox" name="isbanned" value="yes"';
+					if ($ban->banned == TRUE) {
+						$banned .= " checked>";
+					} else {
+						$banned .= ">";
+					}
+
+					//verified
+					if ($ban->verified == TRUE) {
+						$verified = "Yes";
+					} else {
+						$verified = "No";
+					}
+
+					$pagecontent .= $redmsg . $greenmsg . '
+					<form method="post" action="admin.php?action=bans&edit=' . intval($_GET['edit']) . '">
+					<table>
+					<tr>
+						<th>Username</th>
+						<td>' . $ban->username . '</td>
+						<td></td>
+					</tr>
+					<tr>
+						<th>Member Since</th>
+						<td>' . $ban->membersince . '</td>
+						<td></td>
+					</tr>
+					<tr>
+						<th>Is Verified?</th>
+						<td>' . $verified . '</td>
+						<td></td>
+					</tr>
+					<tr>
+						<th>Is banned?</th>
+						<td>' . $banned . ' The user is banned</td>
+						<td></td>
+					</tr>
+					<tr>
+						<th>Ban reason</th>
+						<td><textarea name="banreason">' . $ban->bannedreason . '</textarea></td>
+						<td></td>
+					</tr>
+					<tr>
+						<th><input type="hidden" name="save" value="yepsaved"></th>
+						<td><input type="submit" value="Save" size="35"> or <span class="cancel"><a href="admin.php?action=bans">cancel</a></span></td>
+						<td></td>
+					</tr>
+					</table>
+					</form>';
+				} else {
+					$pagecontent .= '<div class="notification red"><p>The user does not exist.</p></div>';
+				}
+			} else {
+				$pagecontent .= '<h3>Banned users</h3>';
+
+				if ($list = $sql->query("SELECT * FROM wolfvtc_users WHERE banned=TRUE")) {
+					if ($list->num_rows == 0) {
+						$pagecontent .= '<div class="notification red"><p>No users have been banned. You can ban from the userlist.</p></div>';
+					} else {
+						$pagecontent .= '<table class="table" id="bannedusers"><thead>
+						<tr>
+							<th>ID</th>
+							<th>Username</th>
+							<th>Verified</th>
+							<th>Banned by</th>
+							<th>Banned at</th>
+							<th>Reason</th>
+							<th>Actions</th>
+						</tr>
+						</thead><tbody>';
+
+						while ($row = $list->fetch_assoc()) {
+							$pagecontent .= '<tr>
+							<td>' . $row['id'] . '</td>
+							<td>' . $row['username'] . '</td>';
+
+							if ($row['verified'] == TRUE) {
+								$verified = "Yes";
+							} else {
+								$verified = "No";
+							}
+							$pagecontent .= '<td>' . $verified . '</td>';
+
+							$bannedby = new user($sql, "id", $row['bannedby']);
+							if ($bannedby->load()) {
+								$bannedby = $bannedby->username;
+							} else {
+								$bannedby = "Unknown user";
+							}
+
+							$pagecontent .= '<td>' . $bannedby . '</td>
+							<td>' . $row['bannedtime'] . '</td>
+							<td>' . newline($row['bannedreason']) . '</td>
+							<td>
+								<a href="admin.php?action=bans&edit=' . $row['id'] . '" class="linkify">Edit ban</a>
+							</td>
+							</tr>';
+						}
+						$pagecontent .= '</tbody></table>
+
+						<script>$(document).ready(function() 
+						    { 
+						        $("#bannedusers").tablesorter(); 
+						    } 
+						); 
+						</script>';
+					}
+				}
+			}
+		} else { //Add new elseif here for new admin pages!!!!!!
 			$pagecontent .= '<div class="notification red"><p>You do not have permission to view this page.</p></div>';
 		}
 	} else {
@@ -525,6 +693,8 @@ if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admin
 <head>
 	<?php include("inc/head.php"); ?>
 	<link rel="stylesheet" type="text/css" href="style/admin.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.tablesorter.min.js"></script> 
 </head>
 <body>
 	<div class="wrapper">

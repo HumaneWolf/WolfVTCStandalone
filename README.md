@@ -22,3 +22,7 @@ Being website based, the system is easily accessible and does not require any do
 ## Requirements
 - MySQL
 - PHP 5.3+
+
+## Libaries/plugins used
+- jQuery
+- [Tablesorter 2.0](http://tablesorter.com/docs/)
