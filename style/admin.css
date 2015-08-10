@@ -31,8 +31,21 @@
 	text-decoration: underline;
 }
 
-textarea {
+.small textarea {
 	width: 380px;
 	height: 90px;
 	resize: none;
+}
+
+.large textarea {
+	width: 80%;
+	margin-left: 10%;
+	margin-right: 10%;
+	resize: vertical;
+	min-height: 250px;
+}
+
+.html {
+	font-size: smaller;
+	margin-left: 10%;
 }

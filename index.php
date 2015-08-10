@@ -34,7 +34,7 @@ if ($content->load()) {
 }
 
 //news list
-$newsq = $sql->query("SELECT * FROM wolfvtc_announcements WHERE divid=0");
+$newsq = $sql->query("SELECT * FROM wolfvtc_announcements WHERE divid=0 ORDER BY datetime DESC");
 $news = "";
 
 if ($newsq->num_rows >= 1) {
@@ -44,7 +44,7 @@ if ($newsq->num_rows >= 1) {
 while ($row = $newsq->fetch_assoc()) {
 	$author = new user($sql, "id", $row['userid']);
 	if ($author->load()) {
-		$news .= '<p><span class="title"><a href="news.php?art=' . $row['id'] . '" class="news">' . $row['title'] . '</a></span> <span class="by">By ' . $author->username . ' on ' . $row['datetime'] . '</p>';
+		$news .= '<p><span class="title"><a href="news.php?art=' . $row['id'] . '" class="news">' . $row['title'] . '</a></span> <span class="by">by ' . $author->username . ' on ' . $row['datetime'] . '</p>';
 	}
 }
 

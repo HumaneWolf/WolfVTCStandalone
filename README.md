@@ -21,7 +21,7 @@ Being website based, the system is easily accessible and does not require any do
 
 ## Requirements
 - MySQL
-- PHP 5.3+
+- PHP 5.5+
 
 ## Libaries/plugins used
 - jQuery

@@ -9,6 +9,7 @@ require_once("classes/functions.php");
 //USED CLASSES
 require_once("classes/settings.php");
 require_once("classes/user.php");
+require_once("classes/anno.php");
 
 //LOGGED IN? / SESSION
 
@@ -80,7 +81,7 @@ if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admin
 					$pagecontent .= '</tbody></table>
 					<script>$(document).ready(function() 
 					    { 
-					        $("#userlist").tablesorter(); 
+					        $("#verifylist").tablesorter(); 
 					    } 
 					); 
 					</script>';
@@ -354,7 +355,7 @@ if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admin
 						</tr>
 						<tr>
 							<th>ID</th>
-							<td>' . intval($_GET['id']) . '</td>
+							<td>' . $user->id . '</td>
 							<td></td>
 						</tr>
 						<tr>
@@ -556,7 +557,7 @@ if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admin
 					</tr>
 					<tr>
 						<th>Ban reason</th>
-						<td><textarea name="banreason">' . $ban->bannedreason . '</textarea></td>
+						<td><div class="small"><textarea name="banreason">' . $ban->bannedreason . '</textarea></div></td>
 						<td></td>
 					</tr>
 					<tr>
@@ -626,7 +627,214 @@ if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admin
 					}
 				}
 			}
-		} else { //Add new elseif here for new admin pages!!!!!!
+		} elseif ($_GET['action'] == "news" && $sessus->adminnews == TRUE) {
+			if (isset($_GET['id'])) {
+				$news = new anno($sql);
+				$news->id = intval($_GET['id']);
+
+				if ($news->load()) {
+					if ($news->divid == 0) {
+						$redmsg = "";
+						$greenmsg = "";
+						$fail = FALSE;
+
+						$content = $news->text;
+						$title = $news->title;
+
+						if (isset($_POST['save'])) {
+							if (isset($_POST['title'])) {
+								if (strlen($_POST['title']) >= 3 && strlen($_POST['title']) <= 50) {
+									$news->title = $_POST['title'];
+								} else {
+									$fail = TRUE;
+									$redmsg .= "<p>You must have a title between 3 and 50 characters.</p>";
+								}
+							} else {
+								$fail = TRUE;
+								$redmsg .= "<p>You must have a title between 3 and 50 characters.</p>";
+							}
+
+							if (isset($_POST['content'])) {
+								$news->text = $_POST['content'];
+							} else {
+								$fail = TRUE;
+								$redmsg .= "<p>You must have some content.</p>";
+							}
+
+							if ($fail == FALSE) {
+								if ($news->save()) {
+									$greenmsg .= "<p>The article has been updated.</p>";
+									$content = $news->text;
+									$title = $news->title;
+								} else {
+									$redmsg .= "<p>Failed to update article.</p>";
+									$title = $_POST['title'];
+									$content = $_POST['content'];
+								}
+							} else {
+								$title = $_POST['title'];
+								$content = $_POST['content'];
+							}
+
+							if ($redmsg != "") {
+								$redmsg = '<div class="notification red">' . $redmsg . '</div>';
+							}
+
+							if ($greenmsg != "") {
+								$greenmsg = '<div class="notification green">' . $greenmsg . '</div>';
+							}
+						}
+
+						$pagecontent .= '<h3>New article</h3>' . $redmsg . $greenmsg . '
+
+						<form method="post" action="admin.php?action=news&id=' . $_GET['id'] . '">
+						<h4>Title:<h4>
+						<input type="text" size="50" name="title" value="' . $title . '">
+
+						<h4>Content:</h4>
+						<div class="large"><textarea name="content" class="large" id="large">' . $content . '</textarea></div>
+						<span class="html">HTML enabled - useful tags: p, a and img.</span>
+						<input type="hidden" name="save" value="yes">
+						<p><input type="submit" value="Save" size="35"> or <span class="cancel"><a href="admin.php?action=news">cancel</a></span></p>
+						</form>';
+					} else {
+						$pagecontent .= '<div class="notification red"><p>The article does not exist.</p></div>';
+					}
+				} else {
+					$pagecontent .= '<div class="notification red"><p>The article does not exist.</p></div>';
+				}
+			} elseif (isset($_GET['new'])) {
+				$redmsg = "";
+				$greenmsg = "";
+				$fail = FALSE;
+
+				$content = '';
+				$title = '';
+
+				if (isset($_POST['save'])) {
+					$news = new anno($sql);
+					$news->divid = 0;
+					$news->userid = $sessus->id;
+					$news->datetime = currentTime();
+
+					if (isset($_POST['title'])) {
+						if (strlen($_POST['title']) >= 3 && strlen($_POST['title']) <= 50) {
+							$news->title = $_POST['title'];
+						} else {
+							$fail = TRUE;
+							$redmsg .= "<p>You must have a title between 3 and 50 characters.</p>";
+						}
+					} else {
+						$fail = TRUE;
+						$redmsg .= "<p>You must have a title between 3 and 50 characters.</p>";
+					}
+
+					if (isset($_POST['content'])) {
+						$news->text = $_POST['content'];
+					} else {
+						$fail = TRUE;
+						$redmsg .= "<p>You must have some content.</p>";
+					}
+
+					if ($fail == FALSE) {
+						if ($news->save()) {
+							$greenmsg .= "<p>The article has been published.</p>";
+						} else {
+							$redmsg .= "<p>Failed to save article.</p>";
+							$title = $_POST['title'];
+							$content = $_POST['content'];
+						}
+					} else {
+						$title = $_POST['title'];
+						$content = $_POST['content'];
+					}
+
+					if ($redmsg != "") {
+						$redmsg = '<div class="notification red">' . $redmsg . '</div>';
+					}
+
+					if ($greenmsg != "") {
+						$greenmsg = '<div class="notification green">' . $greenmsg . '</div>';
+					}
+				}
+
+				$pagecontent .= '<h3>New article</h3>' . $redmsg . $greenmsg . '
+
+				<form method="post" action="admin.php?action=news&new">
+				<h4>Title:<h4>
+				<input type="text" size="50" name="title" value="' . $title . '">
+
+				<h4>Content:</h4>
+				<div class="large"><textarea name="content" class="large" id="large">' . $content . '</textarea></div>
+				<span class="html">HTML enabled - useful tags: p, a and img.</span>
+				<input type="hidden" name="save" value="yes">
+				<p><input type="submit" value="Save" size="35"> or <span class="cancel"><a href="admin.php?action=news">cancel</a></span></p>
+				</form>';
+			} elseif (isset($_GET['del'])) {
+				$pagecontent .= '<h3>Delete Article</h3>';
+				$news = new anno($sql);
+				$news->id = intval($_GET['del']);
+				if ($news->load()) {
+					if ($news->divid == 0) {
+						if ($sql->query("DELETE FROM wolfvtc_announcements WHERE id=" . intval($_GET['del']))) {
+							$pagecontent .= '<div class="notification green"><p>The article has been deleted.</p></div>';
+						} else {
+							$pagecontent .= '<div class="notification red"><p>Failed to delete article.</p></div>';
+						}
+					} else {
+						$pagecontent .= '<div class="notification red"><p>Article does not exist.</p></div>';
+					}
+				} else {
+					$pagecontent .= '<div class="notification red"><p>Article does not exist.</p></div>';
+				}
+				$pagecontent .= '<p><span class="cancel"><a href="admin.php?action=news">Back</a></span></p>';
+			} else {
+				$list = $sql->query("SELECT * FROM wolfvtc_announcements WHERE divid=0 ORDER BY datetime DESC");
+
+				$pagecontent .= '<h3>News Articles</h3>
+				<p><a href="admin.php?action=news&new" class="linkify">Create new article</a></p>';
+				if ($list->num_rows >= 1) {
+					$pagecontent .= '<table class="table" id="newslist"><thead>
+					<tr>
+						<th>ID</th>
+						<th>Title</th>
+						<th>Written by</th>
+						<th>Published at</th>
+						<th>Actions</th>
+					</tr>
+					</thead><tbody>';
+
+					while ($row = $list->fetch_assoc()) {
+						$user = new user($sql, "id", $row['userid']);
+						if ($user->load()) {
+							$user = $user->username;
+						} else {
+							$user = "Unknown user";
+						}
+
+						$pagecontent .= '
+						<tr>
+							<td>' . $row['id'] . '</td>
+							<td>' . $row['title'] . '</td>
+							<td>' . $user . '</td>
+							<td>' . $row['datetime'] . '</td>
+							<td><a href="admin.php?action=news&id=' . $row['id'] . '" class="linkify">Edit</a> <a href="admin.php?action=news&del=' . $row['id'] . '" class="linkify">Delete</a></td>
+						</tr>';
+					}
+
+					$pagecontent .= '</tbody></table>
+					<p><a href="admin.php?action=news&new" class="linkify">Create new article</a></p>
+					<script>$(document).ready(function() 
+					    { 
+					        $("#newslist").tablesorter(); 
+					    } 
+					); 
+					</script>';
+				} else {
+					$pagecontent .= '<div class="notification red"><p>There are no articles.</p></div>';
+				}
+			}
+		} else { //Add new elseif here for new admin pages
 			$pagecontent .= '<div class="notification red"><p>You do not have permission to view this page.</p></div>';
 		}
 	} else {

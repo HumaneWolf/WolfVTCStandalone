@@ -40,7 +40,7 @@ class page {
 
 	public function save() {
 		if (isset($this->id) && $this->id != "") {
-			if ($save = $this->sql->prepare("UPDATE wolfvtc_pages SET (title=?, 'text'=?, public=?) WHERE id=?")) { // update page
+			if ($save = $this->sql->prepare("UPDATE wolfvtc_pages SET title=?, content=?, public=? WHERE id=?")) { // update page
 				$save->bind_param("ssii", e($this->title), $this->text, intval($this->ispublic), intval($this->id));
 				if ($save->execute) {
 					return TRUE;
@@ -51,7 +51,7 @@ class page {
 				return FALSE;
 			}
 		} else {
-			if ($save = $this->sql->prepare("INSERT INTO wolfvtc_pages (title, 'text', public) VALUES (?, ?, ?)")) { // add new page
+			if ($save = $this->sql->prepare("INSERT INTO wolfvtc_pages (title, content, public) VALUES (?, ?, ?)")) { // add new page
 				$save->bind_param("ssi", e($this->title), $this->text, intval($this->ispublic));
 				if ($save->execute) {
 					return TRUE;

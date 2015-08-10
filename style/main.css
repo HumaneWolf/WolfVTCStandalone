@@ -187,6 +187,22 @@ body {
 	border: 1px solid;
 }
 
+.content .table thead .header {
+	background-repeat: no-repeat;
+	background-position: center right;
+	background-image: url(both.gif);
+	text-align: left;
+	min-width: 25px;
+}
+
+.content .table thead .header.headerSortDown {
+	background-image: url(up.gif);
+}
+
+.content .table thead .header.headerSortUp {
+	background-image: url(down.gif);
+}
+
 .content input {
 	padding: 5px;
 	border-radius: 15px;
@@ -206,7 +222,12 @@ body {
 	text-decoration: none;
 }
 
-.content h4 {
+.content table h4 {
 	margin: 5px;
 	margin-left: 0;
+}
+
+.content h4 {
+	margin-left: 25px;
+	margin-right: 25px;
 }

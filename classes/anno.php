@@ -30,7 +30,7 @@ class anno {
 					$this->datetime = $load['datetime'];
 
 					$this->title = $load['title'];
-					$this->text = $load['text'];
+					$this->text = $load['content'];
 
 					return TRUE;
 				} else {
@@ -45,8 +45,8 @@ class anno {
 	}
 
 	public function save() {
-		if (isset($this->id) && $id != "") {
-			if ($save = $this->sql->prepare("UPDATE wolfvtc_announcements SET (divid=?, userid=?, datetime=?, title=?, 'text'=?) WHERE id=?")) {
+		if (isset($this->id) && $this->id != "") {
+			if ($save = $this->sql->prepare("UPDATE wolfvtc_announcements SET divid=?, userid=?, datetime=?, title=?, content=? WHERE id=?")) {
 				$save->bind_param("iisssi", intval($this->divid), intval($this->userid), e($this->datetime), e($this->title), $this->text, intval($this->id));
 				if ($save->execute()) {
 					return TRUE;
@@ -55,7 +55,7 @@ class anno {
 				}
 			}
 		} else {
-			if ($save = $this->sql->prepare("INSERT INTO wolfvtc_announcements (divid, userid, datetime, title, 'text') VALUES (?, ?, ?, ?, ?)")) {
+			if ($save = $this->sql->prepare("INSERT INTO wolfvtc_announcements (divid, userid, datetime, title, content) VALUES (?, ?, ?, ?, ?)")) {
 				$save->bind_param("iisss", intval($this->divid), intval($this->userid), e($this->datetime), e($this->title), $this->text);
 				if ($save->execute()) {
 					return TRUE;
