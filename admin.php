@@ -411,6 +411,35 @@ if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admin
 						</tr>
 					</table>
 					</form>';
+
+					$logins = $sql->query("SELECT * FROM wolfvtc_logins WHERE userid=" . intval($user->id));
+					if ($logins->num_rows >= 1) {
+						$pagecontent .= '<h4>Recorded logins</h4>
+						<table class="table" id="logins"><thead>
+						<tr>
+							<th>Date/time</th>
+							<th>IP</th>
+						</tr>
+						</thead><tbody>';
+
+						while ($row = $logins->fetch_assoc()) {
+							$pagecontent .= '<tr>
+							<td>' . $row['datetime'] . '</td>
+							<td>' . $row['ip'] . '</td>
+							</tr>';
+						}
+
+						$pagecontent .= '</tbody></table>
+
+						<script>$(document).ready(function() 
+						    { 
+						        $("#logins").tablesorter(); 
+						    } 
+						); 
+						</script>';
+					} else {
+						$pagecontent .= "<p>The user has no recorded logins.</p>";
+					}
 				} else {
 					$pagecontent .= '<div class="notification red"><p>User not found.</p></div>';
 				}
