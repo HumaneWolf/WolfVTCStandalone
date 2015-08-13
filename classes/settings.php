@@ -20,8 +20,8 @@ class config {
 			$load->store_result();
 			$load->bind_result($this->value);
 			$load->fetch();
-			return TRUE;
 			$this->loaded = TRUE;
+			return TRUE;
 		} else {
 			return FALSE;
 		}
