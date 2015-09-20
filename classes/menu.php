@@ -20,7 +20,7 @@ class menu {
 				$this->id = $loaded['id'];
 
 				$this->name = $loaded['name'];
-				$this->url = $loaded['url']
+				$this->url = $loaded['url'];
 				$this->weight = $loaded['weight'];
 
 				return TRUE;

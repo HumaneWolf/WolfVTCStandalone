@@ -10,6 +10,8 @@ require_once("classes/functions.php");
 require_once("classes/settings.php");
 require_once("classes/user.php");
 require_once("classes/anno.php");
+require_once("classes/pages.php");
+require_once("classes/menu.php");
 
 //LOGGED IN? / SESSION
 
@@ -861,6 +863,206 @@ if ($sessus->adminusers == TRUE || $sessus->adminpages == TRUE || $sessus->admin
 					</script>';
 				} else {
 					$pagecontent .= '<div class="notification red"><p>There are no articles.</p></div>';
+				}
+			}
+		} elseif ($_GET['action'] == "pages" && $sessus->adminpages == TRUE) {
+			if (isset($_GET['id'])) {
+				$page = new page($sql);
+				$page->id = intval($_GET['id']);
+
+				if ($page->load()) {
+					$redmsg = "";
+					$greenmsg = "";
+					$fail = FALSE;
+
+					$content = $page->text;
+					$title = $page->title;
+
+					if (isset($_POST['save'])) {
+						if (isset($_POST['title'])) {
+							if (strlen($_POST['title']) >= 3 && strlen($_POST['title']) <= 50) {
+								$page->title = $_POST['title'];
+							} else {
+								$fail = TRUE;
+								$redmsg .= "<p>You must have a title between 3 and 50 characters.</p>";
+							}
+						} else {
+							$fail = TRUE;
+							$redmsg .= "<p>You must have a title between 3 and 50 characters.</p>";
+						}
+
+						if (isset($_POST['content'])) {
+							$page->text = $_POST['content'];
+						} else {
+							$fail = TRUE;
+							$redmsg .= "<p>You must have some content.</p>";
+						}
+
+						if ($fail == FALSE) {
+							if ($page->save()) {
+								$greenmsg .= "<p>The page has been updated.</p>";
+								$content = $page->text;
+								$title = $page->title;
+							} else {
+								$redmsg .= "<p>Failed to update page.</p>";
+								$title = $_POST['title'];
+								$content = $_POST['content'];
+							}
+						} else {
+							$title = $_POST['title'];
+							$content = $_POST['content'];
+						}
+
+						if ($redmsg != "") {
+							$redmsg = '<div class="notification red">' . $redmsg . '</div>';
+						}
+
+						if ($greenmsg != "") {
+							$greenmsg = '<div class="notification green">' . $greenmsg . '</div>';
+						}
+					}
+
+					$pagecontent .= '<h3>New page</h3>' . $redmsg . $greenmsg . '
+
+					<form method="post" action="admin.php?action=pages&id=' . $_GET['id'] . '">
+					<h4>Title:<h4>
+					<input type="text" size="50" name="title" value="' . $title . '">
+
+					<h4>Content:</h4>
+					<div class="large"><textarea name="content" class="large" id="large">' . $content . '</textarea></div>
+					<span class="html">HTML enabled - useful tags: p, a and img.</span>
+					<input type="hidden" name="save" value="yes">
+					<p><input type="submit" value="Save" size="35"> or <span class="cancel"><a href="admin.php?action=pages">cancel</a></span></p>
+					</form>';
+				} else {
+					$pagecontent .= '<div class="notification red"><p>The page does not exist.</p></div>';
+				}
+			} elseif (isset($_GET['new'])) {
+				$redmsg = "";
+				$greenmsg = "";
+				$fail = FALSE;
+
+				$content = '';
+				$title = '';
+
+				if (isset($_POST['save'])) {
+					$page = new page($sql);
+
+					if (isset($_POST['title'])) {
+						if (strlen($_POST['title']) >= 3 && strlen($_POST['title']) <= 50) {
+							$page->title = $_POST['title'];
+						} else {
+							$fail = TRUE;
+							$redmsg .= "<p>You must have a title between 3 and 50 characters.</p>";
+						}
+					} else {
+						$fail = TRUE;
+						$redmsg .= "<p>You must have a title between 3 and 50 characters.</p>";
+					}
+
+					if (isset($_POST['content'])) {
+						$page->text = $_POST['content'];
+					} else {
+						$fail = TRUE;
+						$redmsg .= "<p>You must have some content.</p>";
+					}
+
+					if (isset($_POST['ispublic'])) {
+						$page->ispublic = TRUE;
+					} else {
+						$page->ispublic = FALSE;
+					}
+
+					if ($fail == FALSE) {
+						if ($page->save()) {
+							$greenmsg .= "<p>The page has been published.</p>";
+						} else {
+							$redmsg .= "<p>Failed to save page.</p>";
+							$title = $_POST['title'];
+							$content = $_POST['content'];
+						}
+					} else {
+						$title = $_POST['title'];
+						$content = $_POST['content'];
+					}
+
+					if ($redmsg != "") {
+						$redmsg = '<div class="notification red">' . $redmsg . '</div>';
+					}
+
+					if ($greenmsg != "") {
+						$greenmsg = '<div class="notification green">' . $greenmsg . '</div>';
+					}
+				}
+
+				$pagecontent .= '<h3>New article</h3>' . $redmsg . $greenmsg . '
+
+				<form method="post" action="admin.php?action=pages&new">
+				<h4>Title:<h4>
+				<input type="text" size="50" name="title" value="' . $title . '">
+
+				<h4>Content:</h4>
+				<div class="large"><textarea name="content" class="large" id="large">' . $content . '</textarea></div>
+				<span class="html">HTML enabled - useful tags: p, a and img.</span>
+				<p><input type="checkbox" name="ispublic" value="yes"> Is the page public?</p>
+				<input type="hidden" name="save" value="yes">
+				<p><input type="submit" value="Save" size="35"> or <span class="cancel"><a href="admin.php?action=pages">cancel</a></span></p>
+				</form>';
+			} elseif (isset($_GET['del'])) {
+				$pagecontent .= '<h3>Delete Page</h3>';
+				$page = new page($sql);
+				$page->id = intval($_GET['del']);
+				if ($page->load()) {
+					if ($sql->query("DELETE FROM wolfvtc_pages WHERE id=" . intval($_GET['del']))) {
+						$pagecontent .= '<div class="notification green"><p>The page has been deleted.</p></div>';
+					} else {
+						$pagecontent .= '<div class="notification red"><p>Failed to delete page.</p></div>';
+					}
+				} else {
+					$pagecontent .= '<div class="notification red"><p>page does not exist.</p></div>';
+				}
+				$pagecontent .= '<p><span class="cancel"><a href="admin.php?action=pages">Back</a></span></p>';
+			} else {
+				$list = $sql->query("SELECT * FROM wolfvtc_pages");
+
+				$pagecontent .= '<h3>Pages</h3>
+				<p><a href="admin.php?action=pages&new" class="linkify">Create new page</a></p>';
+				if ($list->num_rows >= 1) {
+					$pagecontent .= '<table class="table" id="pages"><thead>
+					<tr>
+						<th>ID</th>
+						<th>Title</th>
+						<th>Public</th>
+						<th>Actions</th>
+					</tr>
+					</thead><tbody>';
+
+					while ($row = $list->fetch_assoc()) {
+						if ($row['public'] == TRUE) {
+							$publicp = "Yes";
+						} else {
+							$publicp = "No";
+						}
+
+						$pagecontent .= '
+						<tr>
+							<td>' . $row['id'] . '</td>
+							<td>' . $row['title'] . '</td>
+							<td>' . $publicp . '</td>
+							<td><a href="admin.php?action=pages&id=' . $row['id'] . '" class="linkify">Edit</a> <a href="admin.php?action=pages&del=' . $row['id'] . '" class="linkify">Delete</a> <a href="page.php?id=' . $row['id'] . '" class="linkify">View page</a></td>
+						</tr>';
+					}
+
+					$pagecontent .= '</tbody></table>
+					<p><a href="admin.php?action=pages&new" class="linkify">Create new page</a></p>
+					<script>$(document).ready(function() 
+					    { 
+					        $("#pages").tablesorter(); 
+					    } 
+					); 
+					</script>';
+				} else {
+					$pagecontent .= '<div class="notification red"><p>There are no pages.</p></div>';
 				}
 			}
 		} else { //Add new elseif here for new admin pages

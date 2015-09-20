@@ -22,7 +22,7 @@ class page {
 					$this->id = $loaded['id'];
 
 					$this->title = $loaded['title'];
-					$this->text = $loaded['text'];
+					$this->text = $loaded['content'];
 
 					$this->ispublic = $loaded['public'];
 
@@ -42,7 +42,7 @@ class page {
 		if (isset($this->id) && $this->id != "") {
 			if ($save = $this->sql->prepare("UPDATE wolfvtc_pages SET title=?, content=?, public=? WHERE id=?")) { // update page
 				$save->bind_param("ssii", e($this->title), $this->text, intval($this->ispublic), intval($this->id));
-				if ($save->execute) {
+				if ($save->execute()) {
 					return TRUE;
 				} else {
 					return FALSE;
@@ -53,7 +53,7 @@ class page {
 		} else {
 			if ($save = $this->sql->prepare("INSERT INTO wolfvtc_pages (title, content, public) VALUES (?, ?, ?)")) { // add new page
 				$save->bind_param("ssi", e($this->title), $this->text, intval($this->ispublic));
-				if ($save->execute) {
+				if ($save->execute()) {
 					return TRUE;
 				} else {
 					return FALSE;
