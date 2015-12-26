@@ -1,7 +1,8 @@
-# NOT FINISHED - CURRENTLY NOT FUNCTIONING FULLY
+# WIP - CONTAINS BUGS AND UNFINISHED FEATURES
+
+The development on this is currently frozen in order to allow work on other projects. You may use the the project in it's current condition or continue building on it.
 
 # WolfVTC
-**[Installation](https://github.com/HumaneWolf/WolfVTC/wiki/Installation) - [FAQ](https://github.com/HumaneWolf/WolfVTC/wiki/FAQ) - [Downloads](https://github.com/HumaneWolf/WolfVTC/releases)**
 
 ## Description
 WolfVTC is a downloadable browser based VTC system made for ETS2MP VTC companies. It's a website based system similar to MyVTC and TruckNet, except it's easy to edit and adjust to your own needs and to integrate into your own systems.
